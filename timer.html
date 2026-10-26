@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="num">0</p>
+    <button id="start">start</button>
+    <button id="pause">pause</button>
+
+    <script>
+        const start = document.querySelector("#start");
+        const pause = document.querySelector("#pause");
+        const numElement = document.querySelector("#num");
+        
+
+        let count = 0;
+        let timerID = null;
+
+        start.addEventListener("click", function() {
+            timerID = setInterval(() => {
+                count++;
+                numElement.textContent = count;
+                console.log(count);
+            }, 1000); 
+        });
+        
+        pause.addEventListener("click", function() {
+                clearInterval(timerID);
+        });
+    </script>
+</body>
+</html>

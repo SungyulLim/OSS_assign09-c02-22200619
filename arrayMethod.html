@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+    <script>
+        // 배열 forEach
+        const scores = [70, 80, 90];
+        scores.forEach(score => {
+            console.log(score);
+        });
+
+        const updated = scores.map(score => score + 5);
+
+        console.log(updated);
+
+        // function 실습
+        function add(a, b) {
+            return a + b;
+        }
+
+        const add2 = (a, b) => a + b;
+
+        // JS Object
+        const student = {
+            name: "Alice",
+            age: 20,
+
+            introduce() {
+                return `My name is ${this.name}`;
+            }
+        };
+        
+        console.log(student.name);
+        console.log(student.introduce());
+    </script>
+</body>
+
+</html>

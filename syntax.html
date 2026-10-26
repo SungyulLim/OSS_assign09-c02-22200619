@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        const students = [
+            { id: 1, name: "Kim", score: 85 },
+            { id: 2, name: "Lee", score: 92 },
+            { id: 3, name: "Park", score: 78 },
+            { id: 4, name: "Choi", score: 92 }
+        ]
+
+        // 이름이 lee 인 학생
+        const student = students.find(function (student) {
+            return student.name === "Lee";
+        });
+
+        console.log(student);
+
+        // 90점 이상 학생
+        const result = students.filter(function (student) {
+            return student.score >= 90;
+        })
+
+        console.log(result);
+
+        // 선택된 데이터 삭제
+        const select = students.filter(function (student) {
+            return student.id !== 2;
+        })
+
+        // 객체 구조 분해
+        const student2 = {
+            name: "Alice",
+            age: 20,
+            major: "CSEE"
+        };
+
+        const { name, age } = student2;
+        const { major: department } = student2;
+        const { grade = 1 } = student;
+
+    </script>
+</body>
+
+</html>
