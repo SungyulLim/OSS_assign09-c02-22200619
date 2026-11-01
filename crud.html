@@ -13,6 +13,35 @@
     <a href="./index.html">HOME</a>
     <p>MockAPI에 저장된 영화 목록</p>
 
+    <form id="movieForm">
+        <div>
+            <label for="title">영화 제목</label>
+            <input id="title" type="text" required>
+        </div>
+
+        <div>
+            <label for="director">감독</label>
+            <input id="director" type="text" required>
+        </div>
+
+        <div>
+            <label for="genre">장르</label>
+            <input id="genre" type="text" required>
+        </div>
+
+        <div>
+            <label for="country">국가</label>
+            <input id="country" type="text" required>
+        </div>
+
+        <div>
+            <label for="releaseDate">개봉일</label>
+            <input id="releaseDate" type="date" required>
+        </div>
+
+        <button id="submitBtn" type="submit">영화 등록</button>
+    </form>
+
     <button id="loadBtn" type="button">영화 목록 새로고침</button>
     <p id="status" role="status"></p>
     <ul id="movieList"></ul>
@@ -23,6 +52,8 @@
         const loadButton = document.querySelector("#loadBtn");
         const statusElement = document.querySelector("#status");
         const movieList = document.querySelector("#movieList");
+        const movieForm = document.querySelector("#movieForm");
+        const submitButton = document.querySelector("#submitBtn");
 
         let movies = [];
 
@@ -56,9 +87,6 @@
                 }
 
                 const data = await response.json();
-                if (!Array.isArray(data)) {
-                    throw new Error("영화 목록 형식의 응답이 아닙니다.");
-                }
 
                 movies = data;
                 render(movies);
@@ -72,8 +100,54 @@
             }
         }
 
+        async function createMovies(e) {
+            e.preventDefault();
+
+            const title = document.querySelector("#title").value;
+            const director = document.querySelector("#director").value;
+            const genre = document.querySelector("#genre").value;
+            const country = document.querySelector("#country").value;
+            const releaseDate = document.querySelector("#releaseDate").value;
+
+            const movieData = {
+                title,
+                director,
+                genre,
+                country,
+                releaseDate,
+                createdAt: new Date().toISOString()
+            };
+
+            submitButton.disabled = true;
+            statusElement.textContent = "영화를 등록하는 중...";
+
+            try {
+                const response = await fetch("https://6ae2c63cbbb54129229a60c6.mockapi.io/Movie", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(movieData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                movieForm.reset();
+                await loadMovies();
+            } catch (error) {
+                statusElement.textContent = `영화 등록 실패: ${error.message}`;
+                console.error(error);
+            } finally {
+                submitButton.disabled = false;
+            }
+        }
+
+        movieForm.addEventListener("submit", createMovies);
         loadButton.addEventListener("click", loadMovies);
         loadMovies();
+
     </script>
 </body>
 
