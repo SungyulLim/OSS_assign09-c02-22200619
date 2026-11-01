@@ -56,6 +56,7 @@
         const submitButton = document.querySelector("#submitBtn");
 
         let movies = [];
+        let editingId = null;
 
         function render(items) {
             movieList.replaceChildren();
@@ -69,8 +70,17 @@
                 title.textContent = movie.title;
                 details.textContent = `감독: ${movie.director} | ` + `장르: ${movie.genre} | ` + `국가: ${movie.country} | ` + `개봉일: ${releaseDate}`;
 
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.textContent = "수정";
+
+                editButton.addEventListener("click", () => {
+                    startEdit(movie.id);
+                });
+
                 li.appendChild(title);
                 li.appendChild(details);
+                li.appendChild(editButton);
                 movieList.appendChild(li);
             });
         }
@@ -109,6 +119,31 @@
             const country = document.querySelector("#country").value;
             const releaseDate = document.querySelector("#releaseDate").value;
 
+            if (editingId !== null) {
+                submitButton.disabled = true;
+                statusElement.textContent = "영화를 수정하는 중...";
+
+                try {
+                    await updateMovie(editingId, {
+                        title,
+                        director,
+                        genre,
+                        country,
+                        releaseDate
+                    });
+
+                    movieForm.reset();
+                    editingId = null;
+                    submitButton.textContent = "영화 등록";
+                } catch (error) {
+                    statusElement.textContent = `영화 수정 실패: ${error.message}`;
+                    console.error(error);
+                } finally {
+                    submitButton.disabled = false;
+                }
+
+                return;
+            }
             const movieData = {
                 title,
                 director,
@@ -142,6 +177,50 @@
             } finally {
                 submitButton.disabled = false;
             }
+        }
+
+        function startEdit(id) {
+            if (submitButton.disabled) {
+                return;
+            }
+
+            const movie = movies.find(item =>
+                String(item.id) === String(id)
+            );
+
+            if (!movie) {
+                statusElement.textContent = "수정할 영화를 찾을 수 없습니다.";
+                return;
+            }
+
+            editingId = movie.id;
+
+            document.querySelector("#title").value = movie.title;
+            document.querySelector("#director").value = movie.director;
+            document.querySelector("#genre").value = movie.genre;
+            document.querySelector("#country").value = movie.country;
+
+            document.querySelector("#releaseDate").value = String(movie.releaseDate ?? "").slice(0, 10);
+
+            submitButton.textContent = "수정 저장";
+            statusElement.textContent = `"${movie.title}" 수정 중입니다.`;
+        }
+
+        // 업데이트
+        async function updateMovie(id, updatedData) {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            await loadMovies();
         }
 
         movieForm.addEventListener("submit", createMovies);
