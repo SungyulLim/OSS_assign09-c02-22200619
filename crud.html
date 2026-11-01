@@ -78,9 +78,38 @@
                     startEdit(movie.id);
                 });
 
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.textContent = "삭제";
+
+                deleteButton.addEventListener("click", async () => {
+                    if (submitButton.disabled) {
+                        return;
+                    }
+
+                    if (!confirm(`"${movie.title}" 영화를 삭제하시겠습니까?`)) {
+                        return;
+                    }
+
+                    deleteButton.disabled = true;
+                    submitButton.disabled = true;
+                    statusElement.textContent = "영화를 삭제하는 중...";
+
+                    try {
+                        await deleteMovie(movie.id);
+                    } catch (error) {
+                        statusElement.textContent = `영화 삭제 실패: ${error.message}`;
+                        console.error(error);
+                    } finally {
+                        deleteButton.disabled = false;
+                        submitButton.disabled = false;
+                    }
+                });
+
                 li.appendChild(title);
                 li.appendChild(details);
                 li.appendChild(editButton);
+                li.appendChild(deleteButton);
                 movieList.appendChild(li);
             });
         }
@@ -206,7 +235,6 @@
             statusElement.textContent = `"${movie.title}" 수정 중입니다.`;
         }
 
-        // 업데이트
         async function updateMovie(id, updatedData) {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: "PUT",
@@ -223,8 +251,21 @@
             await loadMovies();
         }
 
+        async function deleteMovie(id) {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            await loadMovies();
+        }
+
         movieForm.addEventListener("submit", createMovies);
         loadButton.addEventListener("click", loadMovies);
+        
         loadMovies();
 
     </script>
