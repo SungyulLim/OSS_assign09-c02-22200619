@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 관리</title>
+</head>
+
+<body>
+    <h1>영화 관리 CRUD</h1>
+
+    <a href="./index.html">HOME</a>
+    <p>MockAPI에 저장된 영화 목록</p>
+
+    <button id="loadBtn" type="button">영화 목록 새로고침</button>
+    <p id="status" role="status"></p>
+    <ul id="movieList"></ul>
+
+    <script>
+        const API_URL = "https://6ae2c63cbbb54129229a60c6.mockapi.io/Movie";
+
+        const loadButton = document.querySelector("#loadBtn");
+        const statusElement = document.querySelector("#status");
+        const movieList = document.querySelector("#movieList");
+
+        let movie = [];
+        function render(items) {
+            movieList.replaceChildren();
+
+            items.forEach(movie => {
+                const li = document.createElement("li");
+                const title = document.createElement("h3");
+                const details = document.createElement("p");
+                const releaseDate = String(movie.releaseDate ?? "").slice(0, 10); // 날짜만 보여주게 만드는 방법 -> release date를 string으로 변환 후 날짜만 보여주게 만들기
+
+                title.textContent = movie.title;
+                details.textContent = `감독: ${movie.director} | ` + `장르: ${movie.genre} | ` + `국가: ${movie.country} | ` + `개봉일: ${releaseDate}`;
+
+                li.appendChild(title);
+                li.appendChild(details);
+                movieList.appendChild(li);
+            });
+        }
+        
+
+
+    </script>
+</body>
+
+
+</html>
